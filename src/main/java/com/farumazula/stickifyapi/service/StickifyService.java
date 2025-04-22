@@ -5,6 +5,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.lang.NonNull;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,4 +20,6 @@ public interface StickifyService {
     Optional<Object> saveStickers(@NonNull MultipartFile stickers);
 
     Optional<Object> shareSticker(@NonNull String id);
+
+    List<Object> getAllStickersByChatId(@NonNull String chatId);
 }

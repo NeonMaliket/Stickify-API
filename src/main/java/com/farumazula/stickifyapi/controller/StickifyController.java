@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/stickify")
@@ -46,5 +48,11 @@ class StickifyController {
     public ResponseEntity<Object> getSticker(@RequestParam String fileId) {
         log.info("'Controller' Searching sticker: {}", fileId);
         return ResponseEntity.of(stickifyService.shareSticker(fileId));
+    }
+
+    @GetMapping("/stickers/{chatId}")
+    public ResponseEntity<List<Object>> getAllStickersByChatId(@PathVariable String chatId) {
+        log.info("'Controller' Getting all stickers for chat: {}", chatId);
+        return ResponseEntity.ok(stickifyService.getAllStickersByChatId(chatId));
     }
 }
