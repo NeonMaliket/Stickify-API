@@ -1,5 +1,6 @@
 package com.farumazula.stickifyapi.controller;
 
+import com.farumazula.stickifyapi.bot.core.domain.StickerMeta;
 import com.farumazula.stickifyapi.dto.GeneratePromptDto;
 import com.farumazula.stickifyapi.service.StickifyService;
 import jakarta.validation.Valid;
@@ -38,10 +39,31 @@ class StickifyController {
 
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<Object> uploadSticker(@RequestParam MultipartFile sticker) {
+    @PostMapping("/upload/{chatId}")
+    public ResponseEntity<ByteArrayResource> uploadSticker(@PathVariable String chatId, @RequestParam MultipartFile sticker) {
         log.info("'Controller' Is sticker is empty: {}", sticker.isEmpty());
-        return ResponseEntity.of(stickifyService.saveStickers(sticker));
+        var byteArrayResource = stickifyService.saveStickers(chatId, sticker);
+
+        return byteArrayResource
+                .map(png -> ResponseEntity.ok()
+                        .header("Content-Type", "image/jpeg")
+                        .header("Content-Length", String.valueOf(png.contentLength()))
+                        .header("Content-Disposition", "attachment; filename=\"sticker.jpg\"")
+                        .body(png))
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @PostMapping("/sticker-pack")
+    public ResponseEntity<StickerMeta> createStickerPack(
+            @RequestParam MultipartFile initialSticker,
+            @RequestParam String userId,
+            @RequestParam String name,
+            @RequestParam String title,
+            @RequestParam String emojis
+    ) {
+        var stickerMeta = new StickerMeta(userId, name, title, null, emojis);
+        log.info("'Controller' Creating sticker pack: {}", stickerMeta);
+        return ResponseEntity.of(stickifyService.createNewStickerPack(stickerMeta, initialSticker));
     }
 
     @GetMapping("/sticker")
