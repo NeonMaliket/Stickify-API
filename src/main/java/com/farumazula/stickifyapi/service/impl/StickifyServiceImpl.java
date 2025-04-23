@@ -25,22 +25,24 @@ public class StickifyServiceImpl implements StickifyService {
     private final AiService aiService;
     @Override
     public Optional<ByteArrayResource> aiGeneration(@NonNull GeneratePromptDto prompt) {
-        log.info("'Service' Prompt: {}", prompt);
+        log.info("'Service' AI generation Prompt: {}", prompt);
         return aiService.generateStickerByPrompt(prompt);
     }
 
     @Override
-    public Optional<Object>  saveStickers(@NonNull MultipartFile stickers) {
+    public Optional<Object> saveStickers(@NonNull MultipartFile stickers) {
+        log.info("'Service' Save sticker: {}", stickers);
         return Optional.empty();
     }
 
     @Override
     public Optional<Object> shareSticker(@NonNull String id) {
+        log.info("'Service' Share sticker: {}", id);
         return Optional.empty();
     }
 
     @Override
-    public List<Object> getAllStickersByChatId(String chatId) {
+    public List<Object> getAllStickersByChatId(@NonNull String chatId) {
         return List.of();
     }
 }
