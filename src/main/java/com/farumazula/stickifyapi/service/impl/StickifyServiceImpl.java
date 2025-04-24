@@ -1,7 +1,5 @@
 package com.farumazula.stickifyapi.service.impl;
 
-import com.farumazula.stickifyapi.bot.core.StickerService;
-import com.farumazula.stickifyapi.bot.core.domain.StickerMeta;
 import com.farumazula.stickifyapi.dto.GeneratePromptDto;
 import com.farumazula.stickifyapi.service.AiService;
 import com.farumazula.stickifyapi.service.StickifyService;
@@ -19,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,8 +33,6 @@ public class StickifyServiceImpl implements StickifyService {
     private final AbilityBot abilityBot;
 
     private final ThumbnailsService thumbnailsService;
-
-    private final StickerService stickerService;
 
     @Override
     public Optional<ByteArrayResource> aiGeneration(@NonNull GeneratePromptDto prompt) {
@@ -62,25 +57,5 @@ public class StickifyServiceImpl implements StickifyService {
 
 
         return byteArrayResource;
-    }
-
-    @Override
-    public Optional<Object> shareSticker(@NonNull String id) {
-        log.info("'Service' Share sticker: {}", id);
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Object> getAllStickersByChatId(@NonNull String chatId) {
-        return List.of();
-    }
-
-    @Override
-    @SneakyThrows
-    public Optional<StickerMeta> createNewStickerPack(@NonNull StickerMeta stickerMeta, @NonNull MultipartFile initialSticker) {
-        log.info("'Service' Creating new sticker pack: {}", stickerMeta);
-        stickerService.createStickerSet(stickerMeta, new ByteArrayResource(initialSticker.getBytes()));
-        log.info("'Service' Sticker created");
-        return Optional.of(stickerMeta);
     }
 }
