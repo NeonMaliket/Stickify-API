@@ -4,13 +4,15 @@ import com.farumazula.stickifyapi.dto.GeneratePromptDto;
 import com.farumazula.stickifyapi.service.AiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.image.ImageMessage;
+import org.springframework.ai.image.ImagePrompt;
+import org.springframework.ai.openai.OpenAiImageModel;
+import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -22,19 +24,29 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AiServiceImpl implements AiService {
 
+    private final OpenAiImageModel imageModel;
+    private final ImageMessage systemStickerGenerationPrompt;
+
     @Override
     public Optional<ByteArrayResource> generateStickerByPrompt(@NonNull GeneratePromptDto prompt) {
         log.info("'Service' Generating sticker: {}", prompt);
 
-        try {
-            var file = Files.readAllBytes(Paths.get("21.jpg"));
-            var response = new ByteArrayResource(file);
+        var imageOptions = new OpenAiImageOptions();
+        imageOptions.setResponseFormat("b64_json");
+        imageOptions.setN(1);
+        imageOptions.setSize("1024x1024");
+        var imagePrompt = new ImagePrompt(
+                systemStickerGenerationPrompt.getText().replace("{}", prompt.prompt()),
+                imageOptions
+        );
 
-            log.info("'Service' Capacity: {}", response.contentLength());
-            return Optional.of(response);
-        } catch (IOException e) {
-            log.warn("'Service' Error: {}", e.getMessage());
-            return Optional.empty();
+        var response = imageModel.call(imagePrompt);
+        if (!response.getResults().isEmpty()) {
+            var base64 = response.getResult().getOutput().getB64Json();
+            var imageBytes = Base64.getDecoder().decode(base64);
+            return Optional.of(new ByteArrayResource(imageBytes));
         }
+        return Optional.empty();
+
     }
 }
