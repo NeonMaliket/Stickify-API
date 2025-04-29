@@ -32,7 +32,7 @@ public class ThumbnailsServiceImpl implements ThumbnailsService {
 
         Thumbnails.of(image.getInputStream())
                 .size(512, 512)
-                .addFilter(transparent)
+//                .addFilter(transparent)
                 .outputFormat(FORMAT)
                 .toOutputStream(byteArrayOutputStream);
 
