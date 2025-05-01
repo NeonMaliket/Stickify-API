@@ -44,7 +44,6 @@ jobs:
         run: |
           sshpass -p "$DO_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DO_IP << EOF
             # Открываем необходимые порты
-            sudo ufw allow 8080
             sudo ufw allow 443
             sudo ufw allow 8443
             sudo ufw allow 80
@@ -67,10 +66,13 @@ jobs:
             docker stop stickify_api || true
             docker rm stickify_api || true
 
-            # Запускаем новый контейнер
-            docker run -d --name stickify_api \
-              -e BOT_NAME=BOT_NAME \
-              -e BOT_TOKEN=BOT_TOKEN \
-              -e OPENAI_API_KEY=OPENAI_API_KEY \
+            # Удаляем старый образ
+            docker images -q stickify_api | xargs -r docker rmi -f || true
+
+            # Запускаем новый контейнер с прокинутыми переменными окружения
+            docker run -p 80:8080 -d --name stickify_api \
+              -e BOT_NAME="$BOT_NAME" \
+              -e BOT_TOKEN="$BOT_TOKEN" \
+              -e OPENAI_API_KEY="$OPENAI_API_KEY" \
               stickify_api
           EOF
