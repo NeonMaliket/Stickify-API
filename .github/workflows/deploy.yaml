@@ -59,17 +59,17 @@ jobs:
                 echo "Docker уже установлен."
             fi
 
-            # Загружаем Docker образ
-            docker load < /tmp/stickify_api.tar.gz
-
             # Останавливаем и удаляем старый контейнер
             docker stop stickify_api || true
             docker rm stickify_api || true
 
-            # Удаляем старый образ
+            # Удаляем старый образ (если есть)
             docker images -q stickify_api | xargs -r docker rmi -f || true
 
-            # Запускаем новый контейнер с прокинутыми переменными окружения
+            # Загружаем новый образ
+            docker load < /tmp/stickify_api.tar.gz
+
+            # Запускаем новый контейнер
             docker run -p 80:8080 -d --name stickify_api \
               -e BOT_NAME="$BOT_NAME" \
               -e BOT_TOKEN="$BOT_TOKEN" \
