@@ -1,0 +1,69 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image locally
+        run: |
+          docker build -t stickify_api .
+
+      - name: Save Docker image to archive
+        run: |
+          docker save stickify_api | gzip > stickify_api.tar.gz
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Upload Docker image archive to server
+        env:
+          DO_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+          DO_IP: ${{ secrets.DIGITALOCEAN_IP }}
+        run: |
+          sshpass -p "$DO_PASSWORD" scp -o StrictHostKeyChecking=no stickify_api.tar.gz root@$DO_IP:/tmp/
+
+      - name: SSH to DigitalOcean and deploy
+        env:
+          DO_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+          DO_IP: ${{ secrets.DIGITALOCEAN_IP }}
+          BOT_NAME: ${{ secrets.BOT_NAME }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          sshpass -p "$DO_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DO_IP << EOF
+            # Проверка, установлен ли Docker
+            if ! command -v docker &> /dev/null
+            then
+                echo "Docker не установлен. Устанавливаем Docker."
+                sudo apt-get update
+                sudo apt-get install -y docker.io
+            else
+                echo "Docker уже установлен."
+            fi
+
+            # Загружаем Docker образ
+            docker load < /tmp/stickify_api.tar.gz
+
+            # Останавливаем и удаляем старый контейнер
+            docker stop stickify_api || true
+            docker rm stickify_api || true
+
+            # Запускаем новый контейнер
+            docker run -d --name stickify_api \
+              -e BOT_NAME=BOT_NAME \
+              -e BOT_TOKEN=BOT_TOKEN \
+              -e OPENAI_API_KEY=OPENAI_API_KEY \
+              stickify_api
+          EOF
