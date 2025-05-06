@@ -5,6 +5,6 @@ import org.telegram.abilitybots.api.objects.MessageContext;
 
 public interface BotCommandActions {
 
-    void menuCommand(@NonNull MessageContext ctx);
+    void startCommand(@NonNull MessageContext ctx);
 
 }

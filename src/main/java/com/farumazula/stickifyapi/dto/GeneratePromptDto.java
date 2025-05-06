@@ -14,6 +14,8 @@ public record GeneratePromptDto(
                 max = 100,
                 message = "Prompt size must be between 3 and 100")
         @NotBlank(message = "Prompt can`t be empty")
-        String prompt
+        String prompt,
+        @NotBlank(message = "Chat id can`t be empty")
+        String chatId
 ) {
 }

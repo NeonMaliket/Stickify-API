@@ -1,6 +1,7 @@
 package com.farumazula.stickifyapi.service.impl;
 
 import com.farumazula.stickifyapi.dto.GeneratePromptDto;
+import com.farumazula.stickifyapi.exception.TelegramBotException;
 import com.farumazula.stickifyapi.service.AiService;
 import com.farumazula.stickifyapi.service.StickifyService;
 import com.farumazula.stickifyapi.service.ThumbnailsService;
@@ -27,11 +28,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class StickifyServiceImpl implements StickifyService {
-
     private final AiService aiService;
-
     private final AbilityBot abilityBot;
-
     private final ThumbnailsService thumbnailsService;
 
     @Override
@@ -42,9 +40,9 @@ public class StickifyServiceImpl implements StickifyService {
 
     @Override
     @SneakyThrows
-    public Optional<ByteArrayResource> saveStickers(@NonNull String chatId, @NonNull MultipartFile stickers) {
-        log.info("'Service' Save sticker: {}", stickers);
-        var resource = new ByteArrayResource(stickers.getBytes());
+    public Optional<ByteArrayResource> saveSticker(@NonNull String chatId, @NonNull MultipartFile sticker) {
+        log.info("'Service' Save sticker: {}", sticker);
+        var resource = new ByteArrayResource(sticker.getBytes());
         var byteArrayResource = thumbnailsService.generatePng(resource);
 
         byteArrayResource.ifPresent(convertedPng -> {
@@ -52,6 +50,7 @@ public class StickifyServiceImpl implements StickifyService {
                 abilityBot.execute(new SendSticker(chatId, new InputFile(convertedPng.getInputStream(), "sticker.png")));
             } catch (TelegramApiException | IOException e) {
                 log.warn("'Service' Error: {}", e.getMessage());
+                throw new TelegramBotException(e);
             }
         });
 

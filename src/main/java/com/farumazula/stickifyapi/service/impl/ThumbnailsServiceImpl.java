@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.filters.ImageFilter;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import java.util.Optional;
 public class ThumbnailsServiceImpl implements ThumbnailsService {
 
     private static final String FORMAT = "PNG";
-    private final ImageFilter transparent;
 
     @Override
     @SneakyThrows
@@ -32,7 +30,6 @@ public class ThumbnailsServiceImpl implements ThumbnailsService {
 
         Thumbnails.of(image.getInputStream())
                 .size(512, 512)
-//                .addFilter(transparent)
                 .outputFormat(FORMAT)
                 .toOutputStream(byteArrayOutputStream);
 

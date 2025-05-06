@@ -16,6 +16,6 @@ public interface StickifyService {
 
     Optional<ByteArrayResource> aiGeneration(@NonNull GeneratePromptDto prompt);
 
-    Optional<ByteArrayResource> saveStickers(@NonNull String chatId, @NonNull MultipartFile stickers);
+    Optional<ByteArrayResource> saveSticker(@NonNull String chatId, @NonNull MultipartFile stickers);
 
 }
