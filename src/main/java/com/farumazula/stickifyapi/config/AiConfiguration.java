@@ -13,7 +13,7 @@ class AiConfiguration {
                 Create a highly detailed sticker
                 of {},
                 strictly following the description.
-                The sticker must be on a pure white background,
+                The sticker must be on white wall background,
                 with crisp, clean edges.
                 Do not use any white color in the sticker itself—only the
                 background should be white. Ensure the sticker design accurately
