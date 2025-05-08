@@ -32,11 +32,18 @@ public class SecurityConfig {
         http
 
                 .cors((cors -> cors.configurationSource(corsConfigurationSource())))
+                //TODO somth here
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/v1/invoices/link").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/invoices/status/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/stickify/generate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/stickify/upload/**").permitAll()
+
+
+
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/invoices/upload/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

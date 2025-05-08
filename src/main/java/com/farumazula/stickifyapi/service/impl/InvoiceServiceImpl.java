@@ -37,7 +37,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .currency("XTR")
                 .prices(List.of(
                         new LabeledPrice(
-                                invoiceRequest.prompt(), 100
+                                invoiceRequest.prompt(), 1
                         )
                 ))
                 .build();

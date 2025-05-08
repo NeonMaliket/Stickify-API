@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Ma1iket
@@ -23,12 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InvoiceController {
 
-
     private final InvoiceService invoiceService;
 
     @PostMapping("/link")
     public ResponseEntity<InvoiceLinkResponse> invoiceLink(@Valid @RequestBody SmallInvoiceRequest request) {
         return ResponseEntity.ok(invoiceService.createInvoiceLink(request)
+                .orElseThrow(() -> new InvoiceException("Invoice link creation failed")));
+    }
+
+    @PostMapping("/status/{invoiceId}")
+    public ResponseEntity<Object> invoiceLink(@PathVariable String invoiceId) {
+        return ResponseEntity.ok(invoiceService.getInvoiceStatus(invoiceId)
                 .orElseThrow(() -> new InvoiceException("Invoice link creation failed")));
     }
 }
