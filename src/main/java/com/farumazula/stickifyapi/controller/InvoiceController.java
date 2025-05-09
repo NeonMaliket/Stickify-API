@@ -27,10 +27,4 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.createInvoiceLink(request)
                 .orElseThrow(() -> new InvoiceException("Invoice link creation failed")));
     }
-
-    @PostMapping("/status/{invoiceId}")
-    public ResponseEntity<Object> invoiceLink(@PathVariable String invoiceId) {
-        return ResponseEntity.ok(invoiceService.getInvoiceStatus(invoiceId)
-                .orElseThrow(() -> new InvoiceException("Invoice link creation failed")));
-    }
 }
