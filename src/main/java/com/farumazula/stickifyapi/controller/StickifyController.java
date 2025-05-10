@@ -21,7 +21,6 @@ class StickifyController {
 
     private final StickifyService stickifyService;
 
-    //TODO: stars rollback
     @PostMapping("/generate")
     public ResponseEntity<ByteArrayResource> generateSticker(
             @Valid @RequestBody GeneratePromptDto prompt

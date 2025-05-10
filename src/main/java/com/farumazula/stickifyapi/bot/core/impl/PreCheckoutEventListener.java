@@ -27,9 +27,9 @@ public class PreCheckoutEventListener implements BotEventListener {
 
     @Override
     public void onEvent(@NonNull Update update) {
-        log.info("'Bot' PreCheckout event for user: {}", update.getMessage().getFrom().getUserName());
         if (update.hasPreCheckoutQuery()) {
             var preCheckoutQuery = update.getPreCheckoutQuery();
+            log.info("'Bot' PreCheckout event for user: {}", preCheckoutQuery.getFrom().getUserName());
             var answerPreCheckoutQuery = new AnswerPreCheckoutQuery(
                     preCheckoutQuery.getId(),
                     true

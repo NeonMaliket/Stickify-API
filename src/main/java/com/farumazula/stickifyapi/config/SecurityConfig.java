@@ -8,11 +8,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,18 +35,16 @@ public class SecurityConfig {
         http
 
                 .cors((cors -> cors.configurationSource(corsConfigurationSource())))
-                //TODO somth here
                 .csrf(AbstractHttpConfigurer::disable)
+
+                .logout(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/v1/invoices/link").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/invoices/status/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/stickify/generate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/stickify/upload/**").permitAll()
-
-
-
-
-                        .requestMatchers(HttpMethod.GET, "/api/v1/invoices/upload/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -62,6 +63,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsServiceBean() {
+        return new InMemoryUserDetailsManager(Collections.emptyList());
     }
 
 }

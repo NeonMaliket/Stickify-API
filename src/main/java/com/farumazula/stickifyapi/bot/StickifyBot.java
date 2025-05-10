@@ -12,12 +12,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.db.MapDBContext;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
-import java.io.Serializable;
 import java.util.List;
 
 import static org.telegram.abilitybots.api.objects.Locality.ALL;
@@ -57,7 +53,6 @@ public class StickifyBot extends AbilityBot {
         botEventListeners.forEach(listener -> listener.onEvent(update));
         super.onUpdateReceived(update);
     }
-
 
 
     public Ability startBot() {
